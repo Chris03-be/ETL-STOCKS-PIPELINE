@@ -23,7 +23,6 @@ for key in ["MYSQL_HOST", "MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_DATABASE"]:
         print(f"ERREUR : la variable {key} n'est pas définie dans .env !")
         exit()
 
-# ---------------------------------------------------------
 
 TICKERS = [
     "NVDA", "MSFT", "GOOGL", "AMZN",
