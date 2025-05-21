@@ -1,0 +1,24 @@
+# Environnement virtuel
+.venv/
+venv/
+env/
+ENV/
+
+# Fichiers Python compilés
+__pycache__/
+*.pyc
+*.pyo
+
+# Fichier des secrets
+.env
+
+# Fichiers de logs
+*.log
+
+# Dossiers de configuration d'IDE
+.vscode/
+.idea/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
