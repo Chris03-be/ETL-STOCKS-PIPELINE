@@ -128,3 +128,47 @@ Chris Beda
 MIT
 
 ---
+Utilisation pour l’analyse BI (Power BI, SQL, DAX)
+
+Ce projet ETL prépare une base de données MySQL structurée et à jour, idéale pour l’analyse avancée et la création de dashboards.
+
+ 1. Connexion à la base MySQL
+
+- Ouvre Power BI ou ton outil d’analyse préféré.
+- Connecte-toi à la base MySQL créée par le pipeline.
+- Sélectionne la table `historical_prices` (ou le nom de ta table principale).
+
+2. Préparation des données avec SQL
+
+Utilise des requêtes SQL pour filtrer, agréger ou transformer les données avant import dans Power BI.
+
+Exemple :
+SELECT ticker, date, close
+FROM historical_prices
+WHERE date BETWEEN '2024-01-01' AND '2024-12-31'
+ORDER BY ticker, date;
+
+text
+
+ 3. Création de mesures et KPIs avec DAX (dans Power BI)
+
+Dans Power BI, crée des mesures dynamiques pour enrichir tes analyses.
+
+Exemple de mesure DAX :
+Variation = ([Close] - [Open]) / [Open]
+
+text
+
+ 4. Construction du dashboard
+
+- Utilise les visuels de Power BI pour explorer les tendances, comparer les tickers, filtrer par période, etc.
+- Mets l’accent sur le storytelling et la clarté des insights.
+
+ 5. Bonnes pratiques
+
+- Ne modifie pas le pipeline si tu veux garder une base stable pour l’analyse.
+- Consulte la structure de la table dans le README ou le script pour comprendre les champs disponibles.
+
+---
+
+**Ce projet sert ainsi de socle solide pour toute analyse BI, en combinant la puissance de Python, SQL, DAX et Power BI.

@@ -1,3 +1,4 @@
+
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -8,6 +9,17 @@ import yfinance as yf
 import pandas as pd
 import pymysql # On reste sur PyMySQL
 from datetime import datetime, timedelta
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("pipeline.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 MYSQL_CONFIG = {
     "host": os.getenv("MYSQL_HOST"),
