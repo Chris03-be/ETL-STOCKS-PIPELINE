@@ -1,282 +1,296 @@
-ETL-STOCKS-PIPELINE
-![Automatisé avec Task Scheduler](https://img.shields.ioshields.io/badge/)
-PROJET REALISER AVEC CLAUDE 4.0 SONNET
+Pipeline ETL Financier - Version Securisee avec Configuration Dotenv
+Description
+Pipeline ETL robuste et securise pour extraire des donnees financieres historiques de Yahoo Finance pour 30 tickers repartis en 5 secteurs principaux et 5 indices majeurs. Cette version integre une gestion complete des colonnes multi-indexees yfinance 2.51+, une configuration securisee via variables d'environnement, et un systeme de logging avance.
 
-Ce projet est un pipeline ETL automatisé qui extrait quotidiennement les données boursières de 60 tickers mondiaux via Yahoo Finance, les transforme avec Python/pandas et les charge dans une base de données MySQL structurée.
+Fonctionnalites Cles
+Securite et Configuration
+Configuration dotenv : Variables sensibles externalisees dans .env
 
-Le but est de fournir une base de données à jour pour l'analyse BI, la visualisation Power BI et la prise de décision business basée sur des données financières mondiales.
+Validation automatique des variables d'environnement au demarrage
 
-🎯 Fonctionnalités
-Pipeline ETL Complet
-✅ Extraction automatisée de 60 tickers mondiaux (indices, finance, industrie, tech, énergie)
+Tests de connexion MySQL et yfinance avant traitement
 
-✅ Transformation et nettoyage des données avec pandas
+Logs securises avec masquage des mots de passe
 
-✅ Chargement sécurisé dans MySQL avec gestion d'erreurs
+Robustesse Technique
+Gestion des colonnes multi-indexees yfinance 2.51+ avec aplatissement automatique
 
-✅ Logging professionnel pour traçabilité et debugging
+Retry logic configurable avec 3 tentatives par ticker
 
-Automatisation & Sécurité
-✅ Planification automatique avec le Planificateur de tâches Windows
+Validation et nettoyage des donnees avec verification des prix
 
-✅ Sécurisation des identifiants via fichier .env
+Conversion securisee des types numeriques et des dates
 
-✅ Gestion d'erreurs robuste avec retry automatique
+Creation automatique des colonnes manquantes avec valeurs par defaut
 
-✅ Extensibilité facile (ajout de nouveaux tickers)
+Monitoring et Logs
+Systeme de logging dual : fichier + console
 
-Analyse BI Ready
-✅ Structure optimisée pour Power BI, SQL et DAX
+Logs horodates avec rotation automatique
 
-✅ Classification sectorielle (Finance, Tech, Énergie, Industrie, Indices)
+Statistiques detaillees par secteur et monitoring complet
 
-✅ Données géographiques (USA, Europe, Asie, Canada)
+Metriques de performance en temps reel
 
-✅ KPIs pré-calculés (variations, volumes, dates de mise à jour)
+Architecture du Pipeline
+Configuration Securisee
+text
+.env → Variables d'environnement → Configuration validee → Pipeline securise
+Flux ETL Complet
+text
+Yahoo Finance → Extraction → Validation → Transformation → MySQL → Power BI
+Structure des Composants
+Configuration : Chargement et validation des variables .env
 
-📈 Données Couvertes
-60 Tickers Répartis en 5 Catégories
-Secteur	Nombre	Exemples
-Indices Mondiaux	12	S&P 500 (^GSPC), NASDAQ (^IXIC), CAC 40 (^FCHI), Nikkei (^N225)
-Finance	12	JPMorgan (JPM), Visa (V), HSBC (HSBC), Mastercard (MA)
-Industrie	12	Boeing (BA), Caterpillar (CAT), Airbus (AIR.PA), Toyota (TM)
-Technologie	12	Apple (AAPL), Microsoft (MSFT), Nvidia (NVDA), Google (GOOGL)
-Énergie	12	ExxonMobil (XOM), Shell (SHEL), TotalEnergies (TOT.PA), Tesla (TSLA)
-Couverture Géographique Mondiale
-🇺🇸 États-Unis - 🇪🇺 Europe - 🇬🇧 Royaume-Uni - 🇨🇳 Chine/Hong Kong - 🇯🇵 Japon - 🇨🇦 Canada - 🇦🇺 Australie - 🇮🇳 Inde
+Extraction : Telechargement avec gestion multi-index yfinance 2.51+
 
-🛠️ Prérequis
-Python 3.8+
+Transformation : Nettoyage, validation et conversion des donnees
 
-MySQL Server 8.0+
+Chargement : Insertion optimisee MySQL avec contraintes NOT NULL
 
-Windows (pour l'automatisation avec Task Scheduler)
+Monitoring : Logs detailles et statistiques de performance
 
-Connexion Internet (pour Yahoo Finance API)
-
-Power BI Desktop (optionnel, pour l'analyse)
-
-⚡ Installation
-1. Cloner le dépôt
+Installation et Configuration
+1. Prerequis
 bash
-git clone https://github.com/Chris03-be/ETL-STOCKS-PIPELINE.git
-cd ETL-STOCKS-PIPELINE
-2. Créer et activer l'environnement virtuel
-bash
-python -m venv .venv
-.venv\Scripts\activate   # Windows
-# ou
-source .venv/bin/activate   # Mac/Linux
-3. Installer les dépendances
-bash
-pip install -r requirements.txt
-4. Configurer la base MySQL
-sql
--- Créer la base de données
-CREATE DATABASE IF NOT EXISTS stock_data;
-
--- Créer un utilisateur dédié (optionnel)
-CREATE USER IF NOT EXISTS 'etl_user'@'localhost' IDENTIFIED BY 'mot_de_passe_securise';
-GRANT ALL PRIVILEGES ON stock_data.* TO 'etl_user'@'localhost';
-FLUSH PRIVILEGES;
-5. Configurer le fichier .env
-bash
-# Copier le fichier d'exemple
-cp .env.example .env
-Puis remplir avec vos identifiants MySQL :
+# Installation des dependances
+pip install pandas pymysql yfinance python-dotenv
+2. Configuration de l'Environnement
+Creer le fichier .env a la racine du projet :
 
 text
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=etl_user
-MYSQL_PASSWORD=votre_mot_de_passe
-MYSQL_DATABASE=stock_data
-🚀 Utilisation
-Exécution Manuelle
+# CONFIGURATION BASE DE DONNEES
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=votre_mot_de_passe
+DB_DATABASE=stock_data
+
+# CONFIGURATION PIPELINE
+PIPELINE_MAX_RETRIES=3
+PIPELINE_SLEEP_BETWEEN_RETRIES=2
+
+# CONFIGURATION YFINANCE
+YF_TIMEOUT=30
+YF_THREADS=True
+YF_AUTO_ADJUST=True
+
+# CONFIGURATION LOGS
+LOG_DIRECTORY=logs
+LOG_LEVEL=INFO
+LOG_TO_FILE=True
+LOG_TO_CONSOLE=True
+3. Configuration MySQL
+sql
+-- Creer la base de donnees
+CREATE DATABASE stock_data;
+
+-- Utiliser la base
+USE stock_data;
+
+-- La table sera creee automatiquement par le pipeline
+4. Structure des Fichiers
+text
+pipeline_etl_financier/
+├── etl_stocks.py          # Script principal
+├── .env                   # Variables d'environnement (PRIVE)
+├── .env.example          # Exemple de configuration (PUBLIC)
+├── .gitignore            # Exclusions Git
+├── logs/                 # Dossier des logs (cree automatiquement)
+├── README.md             # Cette documentation
+└── requirements.txt      # Dependances Python
+Utilisation
+Execution Standard
 bash
+# Lancer le pipeline complet
 python etl_stocks.py
-Automatisation (Planificateur de tâches Windows)
-Utiliser le fichier batch run_etl.bat :
+Tests de Configuration
+Le pipeline effectue automatiquement :
 
+Validation des variables d'environnement
+
+Test de connexion MySQL
+
+Test de connexion yfinance
+
+Validation de la configuration pipeline
+
+Resultats Attendus
 text
-@echo off
-cd "C:\chemin\vers\ETL-STOCKS-PIPELINE"
-.venv\Scripts\activate
-python etl_stocks.py
-Configurer le Planificateur de tâches :
+[DOTENV] Variables d'environnement chargees avec succes
+[TEST] Tous les tests de configuration reussis
+[PIPELINE] DEBUT - CONFIGURATION DOTENV VALIDEE
+[SUCCESS] Succes: 30/30 (100.0%)
+[ROWS] Total lignes: ~7,500
+[READY] Base de donnees prete pour Power BI!
+Donnees et Structure
+Tickers Traites (30 total)
+Indices (5) : S&P 500, NASDAQ, Dow Jones, FTSE 100, Nikkei 225
 
-Ouvrir "Planificateur de tâches Windows"
+Technologie (5) : AAPL, MSFT, GOOGL, META, NVDA
 
-Créer une tâche de base
+Finance (5) : JPM, BAC, V, MA, GS
 
-Programmer l'exécution (ex: quotidienne à 8h00)
+Energie (5) : XOM, CVX, COP, SLB, EOG
 
-Action : Démarrer le programme run_etl.bat
+Industrie (5) : BA, CAT, GE, MMM, HON
 
-📊 Utilisation pour l'Analyse BI (Power BI, SQL, DAX)
-Ce projet ETL prépare une base de données MySQL structurée et à jour, idéale pour l'analyse avancée et la création de dashboards.
+Sante (5) : JNJ, PFE, UNH, ABBV, MRK
 
-1. Connexion à la Base MySQL
-Ouvre Power BI Desktop ou ton outil d'analyse préféré
-
-Connecte-toi à la base MySQL créée par le pipeline
-
-Sélectionne la table historical_prices
-
-2. Préparation des Données avec SQL
-Utilise des requêtes SQL pour filtrer, agréger ou transformer les données avant import dans Power BI.
-
-Exemple - Performance par secteur :
-
+Table MySQL : historical_prices
 sql
-SELECT 
-    sector,
-    ticker,
-    date,
-    close,
-    (close - open) / open * 100 AS daily_variation
-FROM historical_prices
-WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-ORDER BY sector, date DESC;
-Exemple - Top performers :
+CREATE TABLE historical_prices (
+    date DATE NOT NULL,
+    ticker VARCHAR(20) NOT NULL,
+    type VARCHAR(20) NOT NULL DEFAULT 'stock',
+    sector VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+    name VARCHAR(100) NOT NULL DEFAULT 'Unknown',
+    country VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+    continent VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+    open FLOAT NOT NULL DEFAULT 0,
+    high FLOAT NOT NULL DEFAULT 0,
+    low FLOAT NOT NULL DEFAULT 0,
+    close FLOAT NOT NULL DEFAULT 0,
+    volume BIGINT NOT NULL DEFAULT 0,
+    adj_close FLOAT NOT NULL DEFAULT 0,
+    last_updated DATETIME NOT NULL,
+    PRIMARY KEY (date, ticker),
+    INDEX idx_sector_date (sector, date),
+    INDEX idx_country (country),
+    INDEX idx_type (type)
+);
+Metadonnees Disponibles
+Temporelles : date, last_updated
 
-sql
-SELECT 
-    ticker,
-    sector,
-    AVG((close - open) / open * 100) as avg_daily_return,
-    STDDEV((close - open) / open * 100) as volatility
-FROM historical_prices 
-WHERE date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
-GROUP BY ticker, sector
-ORDER BY avg_daily_return DESC;
-3. Création de Mesures et KPIs avec DAX (dans Power BI)
-Dans Power BI, crée des mesures dynamiques pour enrichir tes analyses.
+Identifiants : ticker, name, type
 
-Exemples de mesures DAX :
+Geographiques : country, continent
 
+Sectorielles : sector
+
+Financieres : open, high, low, close, volume, adj_close
+
+Connexion Power BI
+Parametres de Connexion
 text
-// Variation journalière
-Variation Journalière = 
-DIVIDE([Close] - [Open], [Open], 0) * 100
+Type : MySQL
+Serveur : localhost (ou 127.0.0.1)
+Port : 3306
+Base de donnees : stock_data
+Table principale : historical_prices
+Analyses Recommandees
+Performance sectorielle : Evolution des cours par secteur
 
-// Moyenne mobile 30 jours
-Moyenne Mobile 30J = 
-CALCULATE(
-    AVERAGE(historical_prices[close]),
-    DATESINPERIOD(historical_prices[date], LASTDATE(historical_prices[date]), -30, DAY)
-)
+Analyses temporelles : Tendances sur 12 mois glissants
 
-// Volume moyen par secteur
-Volume Moyen Secteur = 
-CALCULATE(
-    AVERAGE(historical_prices[volume]),
-    ALLEXCEPT(historical_prices, historical_prices[sector])
-)
+Volatilite : Calcul des ecarts-types et bandes de Bollinger
 
-// Performance YTD
-Performance YTD = 
-VAR FirstPrice = CALCULATE(FIRSTNONBLANK(historical_prices[close], 1), DATESYTD(historical_prices[date]))
-VAR LastPrice = CALCULATE(LASTNONBLANK(historical_prices[close], 1), DATESYTD(historical_prices[date]))
-RETURN DIVIDE(LastPrice - FirstPrice, FirstPrice, 0) * 100
-4. Construction du Dashboard
-Visuels recommandés : Line charts (tendances), Bar charts (comparaisons sectorielles), Cards (KPIs), Tables (détails)
+Volume d'echanges : Analyse de la liquidite par instrument
 
-Filtres dynamiques : Date, Secteur, Type (action/indice), Ticker
+Comparaisons geographiques : Performance USA vs Europe vs Asie
 
-Storytelling : Focus sur les insights actionnables et la clarté des tendances
+Correlations : Matrices de correlation entre secteurs
 
-5. Bonnes Pratiques BI
-✅ Rafraîchissement automatique : Configure Power BI Service pour synchroniser avec MySQL
+KPIs Suggeres
+Rendement annuel par secteur
 
-✅ Modèle en étoile : Utilise les colonnes sector, type, date comme dimensions
+Volatilite moyenne par region
 
-✅ Performance : Crée des index MySQL sur les colonnes fréquemment filtrées
+Volume moyen par type d'instrument
 
-✅ Gouvernance : Ne modifie pas le pipeline si tu veux garder une base stable
+Performance relative vs indices de reference
 
-🔧 Ajouter d'Autres Entreprises (Tickers)
-Pour suivre de nouvelles actions, ajoutez simplement leur ticker dans le dictionnaire TICKER_MAPPING du script etl_stocks.py :
+Ratio risque/rendement par ticker
 
-python
-TICKER_MAPPING = {
-    # Ajouter de nouveaux tickers ici
-    'NFLX': {'sector': 'Technologie', 'type': 'stock'},
-    'DIS': {'sector': 'Industrie', 'type': 'stock'},
-    # ...
-}
-Le script détectera automatiquement les nouveaux tickers et les intégrera au pipeline.
+Maintenance et Evolution
+Monitoring
+Logs detailles dans logs/etl_pipeline_YYYYMMDD_HHMMSS.log
 
-📁 Structure du Projet
-text
-/ETL-STOCKS-PIPELINE/
-├── etl_stocks.py           # Script principal du pipeline ETL
-├── .env                    # Configuration MySQL (à créer)
-├── .env.example           # Exemple de configuration
-├── .gitignore             # Fichiers à ignorer par Git
-├── requirements.txt       # Dépendances Python
-├── run_etl.bat           # Script batch pour Windows
-├── pipeline.log          # Logs d'exécution (généré automatiquement)
-├── README.md             # Documentation du projet
-└── .venv/                # Environnement virtuel Python
-🛠️ Technologies Utilisées
-Catégorie	Technologies
-Backend	Python 3.8+, pandas, yfinance, PyMySQL
-Base de Données	MySQL 8.0+
-Sécurité	python-dotenv
-Automatisation	Windows Task Scheduler
-Analyse BI	Power BI, SQL, DAX
-Monitoring	Logging Python
-📊 Structure des Données MySQL
-Table : historical_prices
-Colonne	Type	Description
-date	DATE	Date de la cotation (PK)
-ticker	VARCHAR(20)	Symbole du ticker (PK)
-open	FLOAT	Prix d'ouverture
-high	FLOAT	Prix le plus haut
-low	FLOAT	Prix le plus bas
-close	FLOAT	Prix de clôture
-volume	BIGINT	Volume d'échange
-adj_close	FLOAT	Prix ajusté (dividendes/splits)
-sector	VARCHAR(50)	Secteur (Finance, Technologie, etc.)
-type	VARCHAR(20)	Type (stock, index)
-last_updated	DATETIME	Date de dernière mise à jour
-🚨 Dépannage
+Metriques de performance : duree, taux de succes, lignes inserees
+
+Statistiques par secteur : suivi de la qualite des donnees
+
+Alertes automatiques en cas d'echec de configuration
+
+Securite
+Variables sensibles externalisees dans .env
+
+Fichier .env exclu du controle de version
+
+Mots de passe masques dans tous les logs
+
+Validation des entrees avant traitement
+
+Points d'Attention
+Evolution yfinance : Surveillance des changements d'API
+
+Tickers delistes : Maintenance periodique de la liste
+
+Qualite des donnees : Monitoring des valeurs anormales
+
+Performance : Optimisation pour plus de tickers si necessaire
+
+Evolutions Futures
+Support de nouveaux marches internationaux
+
+Integration d'autres sources de donnees financieres
+
+API REST pour acces programmatique aux donnees
+
+Dashboard de monitoring en temps reel
+
+Depannage
 Erreurs Communes
-Erreur	Solution
-NameError: 'get_rolling_year_dates' not defined	Vérifier que toutes les fonctions sont définies dans le script
-Unknown column 'sector'	Exécuter ALTER TABLE historical_prices ADD COLUMN sector VARCHAR(50)
-Connection refused	Vérifier que MySQL est démarré
-Timeout yfinance	Relancer le script, vérifier la connexion Internet
-Logs et Monitoring
+Fichier .env non trouve
+
+text
+ERREUR: Fichier .env non trouve ou mal configure!
+Solution : Creer le fichier .env avec les variables requises
+
+Erreur de connexion MySQL
+
+text
+[TEST] Connexion MySQL: X - Access denied
+Solution : Verifier les identifiants dans .env
+
+Erreur yfinance
+
+text
+[TEST] Connexion yfinance: ! - timeout
+Solution : Verifier la connexion internet et augmenter YF_TIMEOUT
+
+Logs de Debug
 bash
-# Vérifier les dernières exécutions
-tail -f pipeline.log
+# Consulter les logs detailles
+tail -f logs/etl_pipeline_*.log
 
-# Compter les erreurs récentes
-grep "ERROR" pipeline.log | tail -10
-🤝 Contribution
-Fork le projet
+# Verifier la configuration
+grep "CONFIG" logs/etl_pipeline_*.log
+Support et Contribution
+Structure du Projet
+Version : 3.0 - Securisee avec Dotenv
 
-Créer une branche feature (git checkout -b feature/nouvelle-fonctionnalite)
+Compatibilite : yfinance 2.51+, Python 3.8+
 
-Commit les changements (git commit -am 'Ajout nouvelle fonctionnalité')
+Statut : Production Ready
 
-Push vers la branche (git push origin feature/nouvelle-fonctionnalite)
+Contribution
+Fork du projet
 
-Créer une Pull Request
+Creer une branche feature
 
-👨‍💻 Auteur
-Chris Beda
+Tester avec votre configuration .env
 
-🐙 GitHub : Chris03-be
+Soumettre une pull request
 
-💼 etudiant en Business Intelligence et analyse de données
+Documentation Technique
+Configuration detaillee dans .env.example
 
-pipelines ETL et visualisation Power BI
+Logs structures pour debugging
 
-📄 Licence
-MIT License - Voir le fichier LICENSE pour plus de détails.
+Tests automatiques de configuration
 
-⭐ Si ce projet vous a été utile pour vos analyses BI, n'hésitez pas à lui donner une étoile !
+Validation des donnees en temps reel
 
+Pipeline ETL Financier - Pret pour l'Analyse BI Avancee
+Derniere mise a jour : Mai 2025
